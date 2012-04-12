@@ -6,7 +6,7 @@ module Rack
     def initialize(app = nil, &b)
       @app = app || lambda {|env| [404, [], []] }
       @matchers = []
-      @global_options = {:preserve_host => true, :matching => :all, :verify_ssl => true, :debug => false}
+      @global_options = {:preserve_host => true, :x_forwarded_host => true, :matching => :all, :verify_ssl => true, :debug => false}
       instance_eval &b if block_given?
     end
 
@@ -24,7 +24,8 @@ module Rack
           headers[header] = value
         end
       }
-      headers['HOST'] = uri.host if all_opts[:preserve_host]
+      headers['HOST'] = uri.host if all_opts[:preserve_host]       
+      headers['X-Forwarded-Host'] = rackreq.host if all_opts[:x_forwarded_host]
       puts "Proxying #{rackreq.url} => #{uri} (Headers: #{headers.inspect})" if all_opts[:debug]
 
       session = Net::HTTP.new(uri.host, uri.port)
