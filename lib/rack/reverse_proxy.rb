@@ -25,7 +25,7 @@ module Rack
         end
       }
       headers['HOST'] = uri.host if all_opts[:preserve_host]
-      puts "Proxying #{rackreq.fullpath} => #{uri} (Headers: #{headers.inspect})"
+      puts "Proxying #{rackreq.url} => #{uri} (Headers: #{headers.inspect})"
       
       session = Net::HTTP.new(uri.host, uri.port)
       session.read_timeout=all_opts[:timeout] if all_opts[:timeout]
